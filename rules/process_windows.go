@@ -11,9 +11,9 @@ import (
 	"syscall"
 	"unsafe"
 
-	"github.com/Dreamacro/clash/common/cache"
-	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/log"
+	"github.com/paradiseduo/clashr/common/cache"
+	C "github.com/paradiseduo/clashr/constant"
+	"github.com/paradiseduo/clashr/log"
 
 	"golang.org/x/sys/windows"
 )
