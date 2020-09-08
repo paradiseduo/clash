@@ -22,7 +22,6 @@ func urlTestWithTolerance(tolerance uint16) urlTestOption {
 type URLTest struct {
 	*outbound.Base
 	tolerance  uint16
-	lastDelay  uint16
 	fastNode   C.Proxy
 	single     *singledo.Single
 	fastSingle *singledo.Single
@@ -63,13 +62,6 @@ func (u *URLTest) proxies() []C.Proxy {
 
 func (u *URLTest) fast() C.Proxy {
 	elm, _, _ := u.fastSingle.Do(func() (interface{}, error) {
-		// tolerance
-		if u.tolerance != 0 && u.fastNode != nil {
-			if u.fastNode.LastDelay() < u.lastDelay+u.tolerance {
-				return u.fastNode, nil
-			}
-		}
-
 		proxies := u.proxies()
 		fast := proxies[0]
 		min := fast.LastDelay()
@@ -84,10 +76,12 @@ func (u *URLTest) fast() C.Proxy {
 				min = delay
 			}
 		}
+		// tolerance
+		if u.fastNode == nil || u.fastNode.LastDelay() > fast.LastDelay() + u.tolerance {
+			u.fastNode = fast
+		}
 
-		u.fastNode = fast
-		u.lastDelay = fast.LastDelay()
-		return fast, nil
+		return u.fastNode, nil
 	})
 
 	return elm.(C.Proxy)
