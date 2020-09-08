@@ -106,7 +106,7 @@ func (r *Resolver) Exchange(m *D.Msg) (msg *D.Msg, err error) {
 			setMsgTTL(msg, uint32(1)) // Continue fetch
 			go r.exchangeWithoutCache(m)
 		} else {
-			setMsgTTL(msg, uint32(expireTime.Sub(time.Now()).Seconds()))
+			setMsgTTL(msg, uint32(time.Until(expireTime).Seconds()))
 		}
 		return
 	}
@@ -186,6 +186,11 @@ func (r *Resolver) IsFakeIP(ip net.IP) bool {
 	return false
 }
 
+// PatchCache overwrite lruCache to the new resolver
+func (r *Resolver) PatchCache(n *Resolver) {
+	r.lruCache.CloneTo(n.lruCache)
+}
+
 func (r *Resolver) batchExchange(clients []dnsClient, m *D.Msg) (msg *D.Msg, err error) {
 	fast, ctx := picker.WithTimeout(context.Background(), time.Second*5)
 	for _, client := range clients {
@@ -203,7 +208,7 @@ func (r *Resolver) batchExchange(clients []dnsClient, m *D.Msg) (msg *D.Msg, err
 
 	elm := fast.Wait()
 	if elm == nil {
-		err := errors.New("All DNS requests failed")
+		err := errors.New("all DNS requests failed")
 		if fErr := fast.Error(); fErr != nil {
 			err = fmt.Errorf("%w, first error: %s", err, fErr.Error())
 		}

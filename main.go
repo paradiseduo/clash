@@ -10,11 +10,11 @@ import (
 	"syscall"
 
 	"github.com/paradiseduo/clashr/config"
-	"github.com/paradiseduo/clashr/constant"
 	C "github.com/paradiseduo/clashr/constant"
 	"github.com/paradiseduo/clashr/hub"
 	"github.com/paradiseduo/clashr/hub/executor"
 	"github.com/paradiseduo/clashr/log"
+
 )
 
 var (
@@ -83,10 +83,10 @@ func main() {
 	if testConfig {
 		if _, err := executor.Parse(); err != nil {
 			log.Errorln(err.Error())
-			fmt.Printf("configuration file %s test failed\n", constant.Path.Config())
+			fmt.Printf("configuration file %s test failed\n", C.Path.Config())
 			os.Exit(1)
 		}
-		fmt.Printf("configuration file %s test is successful\n", constant.Path.Config())
+		fmt.Printf("configuration file %s test is successful\n", C.Path.Config())
 		return
 	}
 

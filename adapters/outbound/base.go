@@ -13,10 +13,6 @@ import (
 	C "github.com/paradiseduo/clashr/constant"
 )
 
-var (
-	defaultURLTestTimeout = time.Second * 5
-)
-
 type Base struct {
 	name string
 	addr string
